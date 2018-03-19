@@ -9,8 +9,11 @@ trait CostFunction {
 
 class EntropyCostFunction() extends CostFunction {
   def computeCost(aL: DenseMatrix[Double], y: DenseMatrix[Double]): Double = {
-    val ones= DenseMatrix.ones[Double](y.rows, y.cols)
     val m = y.cols
+    if (m == 0) {
+      throw new RuntimeException("Inputs array should not be empty")
+    }
+    val ones= DenseMatrix.ones[Double](y.rows, y.cols)
     sum((y *:* log(aL)) + ((ones - y) *:* log(ones - aL))) / m 
   }
 }
