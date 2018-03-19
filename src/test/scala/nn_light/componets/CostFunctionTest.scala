@@ -15,8 +15,10 @@ class CostFunctionTest extends FunSuite {
   
   test("Empty inputs for const function") {
    new SetUp {
-     val cost = costFunction.computeCost(DenseMatrix.ones(0, 0), DenseMatrix.ones(0, 0))
-     println(cost)
+     assertThrows[RuntimeException] {
+       val cost = costFunction.computeCost(DenseMatrix.ones(0, 0), DenseMatrix.ones(0, 0))
+       println(cost)
+     }
    } 
   }
   
