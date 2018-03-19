@@ -63,8 +63,6 @@ class LForwardModelTest extends FunSuite {
       val parameters: Parameters = RandomInitializer().initializeParametersDeep(Seq(2, 4, 5, 1))
       val (yOut, caches) = forwardModel.lModelForward(XInput = XInput, parameters = parameters)
       assert(yOut.rows === 1 && yOut.cols === 2)
-      
-      
     }
   }
 }

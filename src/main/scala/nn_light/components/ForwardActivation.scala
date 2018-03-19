@@ -18,7 +18,6 @@ trait ForwardActivation {
   : (DenseMatrix[Double], Cache)
 }
 
-
 class LForwardModel() extends ForwardActivation {
   
   def linearForward(activations: DenseMatrix[Double], 
