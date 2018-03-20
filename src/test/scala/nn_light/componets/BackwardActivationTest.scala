@@ -3,7 +3,7 @@ package nn_light.componets
 import breeze.linalg.{BitVector, DenseMatrix, DenseVector}
 import nn_light.components.{BackwardActivation, BackwardActivationImpl, Derivatives, LinearCache}
 import org.junit.runner.RunWith
-import org.scalatest.FunSuite
+import org.scalatest.{Assertion, FunSuite}
 import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
@@ -12,7 +12,7 @@ class BackwardActivationTest extends FunSuite {
   trait SetUp {
     val backwardActivation: BackwardActivation = BackwardActivationImpl()
     
-    def testMatrixValues(actual: DenseMatrix[Double], expected: DenseMatrix[Double]) = {
+    def testMatrixValues(actual: DenseMatrix[Double], expected: DenseMatrix[Double]): Assertion = {
       val  dif = actual -:- expected <:< DenseMatrix.fill(actual.rows, actual.cols){0.0000001}
       assert(dif.forall(x => x))
     }
