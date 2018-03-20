@@ -1,6 +1,6 @@
 package nn_light.components
 
-import breeze.linalg.{DenseMatrix, DenseVector}
+import breeze.linalg.DenseMatrix
 import breeze.numerics.{relu, sigmoid}
 
 trait ActivationFunction {
