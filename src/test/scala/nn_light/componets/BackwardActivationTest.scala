@@ -38,7 +38,7 @@ class BackwardActivationTest extends FunSuite {
       testMatrixValues(devs.dW, DenseMatrix((-0.10076895, 1.40685096, 1.64992505)))
       
       val diffDb: BitVector = devs.db -:- DenseVector(0.50629448) <:<
-        DenseVector.fill(devs.db.length) {0.00001}
+        DenseVector.fill(devs.db.length) {0.000001}
       assert(diffDb.forall(x => x))
     }
   }
