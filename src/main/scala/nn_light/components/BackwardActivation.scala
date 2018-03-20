@@ -6,6 +6,16 @@ case class Derivatives(dAPrev: DenseMatrix[Double],
                        dW: DenseMatrix[Double], 
                        db: DenseVector[Double])
 
+case class Grads(matrices: Map[String, DenseMatrix[Double]], 
+                 vectors: Map[String, DenseVector[Double]]) {
+  
+  def update(devs: Derivatives, daLIdx: Int, layer:Int) : Grads = {
+    val newMatrices = matrices + (s"dA$daLIdx" -> devs.dAPrev)  + (s"dW$layer" -> devs.dW)
+    val newVectors = vectors + (s"db$layer" -> devs.db)
+    Grads(newMatrices, newVectors)
+  }
+}
+
 trait BackwardActivation {
   
   def linearBackward(dZ: DenseMatrix[Double], linearCache: LinearCache): Derivatives
@@ -16,7 +26,7 @@ trait BackwardActivation {
   
   def lModelBackward(aL: DenseMatrix[Double], 
                      y: DenseMatrix[Double], 
-                     cache: Cache): Map[String, DenseMatrix[Double]] 
+                     cache: Cache): Grads
 }
 
 
@@ -37,16 +47,27 @@ class BackwardActivationImpl extends BackwardActivation {
   def linearActivationBackward(dA: DenseMatrix[Double], 
                                cache: (LinearCache, ActivationCache), 
                                activationFunction: ActivationFunction): Derivatives = {
-    ???
+    val (linearCache, activationCache) = cache
+    val dZ = dA *:* activationFunction.firstDerivative(activationCache.inputs)
+    this.linearBackward(dZ, linearCache)
   }
 
   def lModelBackward(aL: DenseMatrix[Double], 
                      y: DenseMatrix[Double], 
-                     cache: Cache): Map[String, DenseMatrix[Double]] = {
-    ???
+                     cache: Cache): Grads = {
+    val L = cache.caches.size
+    val ones = DenseMatrix.ones[Double](y.rows, y.cols)
+    val dAL = - ((y /:/ aL) - ((ones - y) /:/ (ones - aL))) 
+    val lastCache = cache.caches(L - 1)
+    val derivatives = linearActivationBackward(dAL, lastCache, Sigmoid())
+    val lastLayerGrads = Grads(Map(), Map()).update(derivatives, L-1, L)
+    (L-2 to 0 by -1).foldLeft(lastLayerGrads) { (grads, l) =>  
+      val currentCache = cache.caches(l)
+      val currentGrads = linearActivationBackward(grads.matrices(s"dA${l+1}"), currentCache, Relu())
+      grads.update(currentGrads, l, l+1)
+    }
   }
 }
-
 
 object BackwardActivationImpl {
   def apply(): BackwardActivationImpl = new BackwardActivationImpl()
