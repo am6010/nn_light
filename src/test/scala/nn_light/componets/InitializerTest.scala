@@ -1,6 +1,7 @@
 package nn_light.componets
 
-import nn_light.components.{Parameters, RandomInitializer}
+import breeze.linalg.{DenseMatrix, DenseVector}
+import nn_light.components.{Grads, Parameters, RandomInitializer}
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
@@ -56,6 +57,20 @@ class InitializerTest extends FunSuite {
       assert(W2.rows === 3 && W2.cols === 4)
       assert(b1.length === 4)
       assert(b2.length === 3)
+    }
+  }
+  
+  test("update test") {
+    new testContext {
+      val parameters: Parameters = initializer.initializeParametersDeep(Seq(3 , 2))
+      val dW1 = DenseMatrix((0.2, -0.1, 0.1), (-0.4, 0.8, -0.7))
+      val db1 = DenseVector( 0.3, - 0.5)
+      
+      val grads = Grads(Map(("dW1", dW1)), Map(("db1", db1)))
+      
+      val newParameters: Parameters = parameters.update(grads, 0.00025)
+      assert(newParameters.weights("W1") !== null)
+      assert(newParameters.bias("b1") !== null)
     }
   }
 }

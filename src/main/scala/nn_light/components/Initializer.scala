@@ -32,4 +32,19 @@ case class RandomInitializer() extends Initializer {
 }
 
 case class Parameters(weights: Map[String, DenseMatrix[Double]],
-                      bias: Map[String, DenseVector[Double]])
+                      bias: Map[String, DenseVector[Double]]) {
+  
+  def update(grads: Grads, learningRate: Double): Parameters = {
+    val newWeights = weights.map { case (key, w) =>
+        val rates = DenseMatrix.fill(w.rows, w.cols) {learningRate}
+        key -> (w - (rates *:* grads.matrices(s"d$key")))
+    }
+    
+    val newBias = bias.map { case (key, b) =>
+        val rates = DenseVector.fill(b.length) {learningRate}
+        key -> (b - (rates *:* grads.vectors(s"d$key")))
+    }
+    
+    Parameters(newWeights, newBias)
+  }
+}
