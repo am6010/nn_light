@@ -27,6 +27,6 @@ case class Relu() extends ActivationFunction {
   }
 
   def firstDerivative(zInput: DenseMatrix[Double]): DenseMatrix[Double] = {
-    zInput.map(e => if (e > 0.0) 1.0 else 0.0)
+    zInput.map(e => if (e > 0.0) 1.00 else 0.00000001)
   }
 }

@@ -1,6 +1,7 @@
 package nn_light.components
 
-import breeze.linalg.{DenseMatrix, DenseVector}
+import breeze.linalg.{DenseMatrix, DenseVector, max, min}
+import breeze.numerics.sqrt
 
 trait Initializer {
   def initializeParametersDeep(layersDims: Seq[Int]): Parameters 
@@ -18,7 +19,8 @@ case class RandomInitializer() extends Initializer {
     val zippedLayersDims = layersDims.zip(layersDims.tail).zipWithIndex
     
     val weights = zippedLayersDims.foldLeft(weightsInit) { case (w, ((li_1, li), idx)) =>
-      val lWeight: DenseMatrix[Double] = DenseMatrix.rand(li, li_1) *:* 0.01
+      val lWeight: DenseMatrix[Double] = DenseMatrix.rand(li, li_1) *:* 
+        DenseMatrix.fill(li, li_1) {0.01}
       w + (s"W${idx + 1}" -> lWeight)
     }
     
