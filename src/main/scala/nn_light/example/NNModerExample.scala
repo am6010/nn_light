@@ -2,7 +2,6 @@ package nn_light.example
 
 import breeze.linalg.{DenseMatrix, sum}
 import breeze.numerics.abs
-import com.github.fommil.netlib.BLAS
 import nn_light.components._
 
 object NNModerExample extends App {
