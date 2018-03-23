@@ -36,12 +36,10 @@ class BackwardActivationImpl extends BackwardActivation {
     val aPrev = linearCache.activations
     val weights = linearCache.weights
     val m = aPrev.cols.toDouble
-    val dW = dZ * aPrev.t
-    val normDW = dW /:/ DenseMatrix.fill(dW.rows, dW.cols){m}
-    val db = sum(dZ, Axis._1) 
-    val normDb  = db /:/ DenseVector.fill(db.length){m}
+    val dW = (dZ * aPrev.t) /:/ m
+    val db = sum(dZ, Axis._1)  /:/ m
     val dAPrev = weights.t * dZ
-    Derivatives(dAPrev, normDW, normDb)
+    Derivatives(dAPrev, dW, db)
   }
 
   def linearActivationBackward(dA: DenseMatrix[Double], 
@@ -81,10 +79,9 @@ class BackwardActivationL2Impl(lambda: Double) extends BackwardActivation {
     val weights = linearCache.weights
     val m = aPrev.cols.toDouble
     val dW = dZ * aPrev.t
-    val normDW = dW /:/ DenseMatrix.fill(dW.rows, dW.cols){m}  + 
-      (DenseMatrix.fill(weights.rows, weights.cols) {lambda / m} *:* weights)
+    val normDW = dW *:* (1.0 / m)  + ((lambda/m) * weights)  
     val db = sum(dZ, Axis._1)
-    val normDb  = db /:/ DenseVector.fill(db.length){m}
+    val normDb  = db *:* (1.0 / m)
     val dAPrev = weights.t * dZ
     Derivatives(dAPrev, normDW, normDb)
   }

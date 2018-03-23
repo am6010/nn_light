@@ -50,7 +50,7 @@ object GradientChecker extends App {
     val cost = costFunction.computeCost(aL, Y, parameters)
     val grads = backward.lModelBackward(aL, Y, cache)
     val vecGrads = vectorizeGrads(grads, layers.size - 1)
-    val epsilon = 10e-7
+    val epsilon = 1e-7
 
     val gradappxArr = (0 until paramVec.length).map { ith =>
       val thetaPlus = paramVec.copy
