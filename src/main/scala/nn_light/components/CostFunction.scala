@@ -19,6 +19,10 @@ class EntropyCostFunction() extends CostFunction {
   }
 }
 
+object EntropyCostFunction {
+  def apply(): EntropyCostFunction = new EntropyCostFunction()
+}
+
 class EntropyCostFunctionL2(lambda: Double) extends CostFunction {
   def computeCost(aL: DenseMatrix[Double], y: DenseMatrix[Double], parameters: Parameters): Double = {
     val m = y.cols
@@ -35,6 +39,6 @@ class EntropyCostFunctionL2(lambda: Double) extends CostFunction {
   }
 }
 
-object EntropyCostFunction {
-  def apply(): EntropyCostFunction = new EntropyCostFunction()
+object EntropyCostFunctionL2 {
+  def apply(lambda: Double): EntropyCostFunctionL2 = new EntropyCostFunctionL2(lambda)
 }
