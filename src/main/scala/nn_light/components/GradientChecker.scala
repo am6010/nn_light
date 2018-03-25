@@ -2,7 +2,7 @@ package nn_light.components
 
 import breeze.linalg.{DenseMatrix, DenseVector, norm}
 
-object GradientChecker extends App {
+object GradientChecker {
 
   def vectorizeParameters(params: Parameters, L: Int): DenseVector[Double] = {
     (1 to L).foldLeft(DenseVector[Double]()) {(vec, l) =>

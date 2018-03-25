@@ -54,8 +54,7 @@ class BackwardActivationImpl extends BackwardActivation {
                      y: DenseMatrix[Double], 
                      cache: Cache): Grads = {
     val L = cache.caches.size
-    val ones = DenseMatrix.ones[Double](y.rows, y.cols)
-    val dAL = - ((y /:/ aL) - ((ones - y) /:/ (ones - aL))) 
+    val dAL = - ((y /:/ aL) - ((1.0 - y) /:/ (1.0 - aL))) 
     val lastCache = cache.caches(L - 1)
     val derivatives = linearActivationBackward(dAL, lastCache, Sigmoid())
     val lastLayerGrads = Grads(Map(), Map()).update(derivatives, L-1, L)

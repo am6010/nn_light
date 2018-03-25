@@ -1,7 +1,7 @@
 package nn_light.componets
 
 import breeze.linalg.{DenseMatrix, DenseVector}
-import nn_light.components.{Grads, Parameters, RandomInitializer}
+import nn_light.components.{Grads, HeInitializer, Parameters, RandomInitializer}
 import org.junit.runner.RunWith
 import org.scalatest.{Assertion, FunSuite}
 import org.scalatest.junit.JUnitRunner
@@ -11,7 +11,7 @@ import org.scalatest.junit.JUnitRunner
 class InitializerTest extends FunSuite {
   
   trait testContext {
-    val initializer = RandomInitializer()
+    val initializer = RandomInitializer(0.01)
     def testMatrixValues(actual: DenseMatrix[Double], expected: DenseMatrix[Double]): Assertion = {
       val  dif = actual -:- expected <:< DenseMatrix.fill(actual.rows, actual.cols){0.0000001}
       assert(dif.forall(x => x))
@@ -63,6 +63,20 @@ class InitializerTest extends FunSuite {
       assert(b2.length === 3)
     }
   }
+  
+  test("initialise He model") {
+    val parameters = HeInitializer().initializeParametersDeep(Seq(2, 4, 1))
+    val W1 = parameters.weights("W1")
+    val W2 = parameters.weights("W2")
+    val b1 = parameters.bias("b1")
+    val b2 = parameters.bias("b2")
+
+    assert(W1.rows === 4 && W1.cols === 2)
+    assert(W2.rows === 1 && W2.cols === 4)
+    assert(b1.length === 4)
+    assert(b2.length === 1)
+  }
+  
   
   test("update test") {
     new testContext {

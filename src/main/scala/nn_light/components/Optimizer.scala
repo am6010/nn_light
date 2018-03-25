@@ -14,7 +14,7 @@ class GradientDescentOptimizer(numIterations: Int) extends Optimizer {
       val (newParams, newCost) = provider(params)
       
       if (iter % 1000 == 0) {
-        println(s"cost at iteration: $iter -> ${newCost}")
+        println(s"cost at iteration: $iter -> $newCost")
       }
       (newParams, costs :+ newCost)
     }

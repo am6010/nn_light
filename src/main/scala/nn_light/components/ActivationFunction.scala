@@ -16,7 +16,7 @@ case class Sigmoid() extends ActivationFunction {
 
   def firstDerivative(zInput: DenseMatrix[Double]): DenseMatrix[Double] = {
     val sig = sigmoid(zInput)
-    sig *:* (DenseMatrix.ones[Double](zInput.rows, zInput.cols) - sig)
+    sig *:* (1.0 - sig)
   }
 }
 

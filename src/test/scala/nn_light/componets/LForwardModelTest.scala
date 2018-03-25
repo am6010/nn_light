@@ -111,7 +111,7 @@ class LForwardModelTest extends FunSuite {
   test("LForwardModel test") {
     new setUp {
       val XInput = DenseMatrix((0.3 , -1.3), (0.4, 1.0))
-      val parameters: Parameters = RandomInitializer().initializeParametersDeep(Seq(2, 4, 5, 1))
+      val parameters: Parameters = RandomInitializer(0.01).initializeParametersDeep(Seq(2, 4, 5, 1))
       val (yOut, caches) = forwardModel.lModelForward(XInput = XInput, parameters = parameters)
       assert(yOut.rows === 1 && yOut.cols === 2)
     }
