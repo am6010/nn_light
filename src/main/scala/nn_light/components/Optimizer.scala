@@ -5,18 +5,24 @@ trait Optimizer {
                provider: Parameters => (Parameters, Double)): (Parameters, Seq[Double])
 }
 
-class GradientDescentOptimizer(numIterations: Int) extends Optimizer {
+class GradientDescentOptimizer(numIterations: Int, costLimit: Double = 0.06) extends Optimizer {
   def optimize(initialParameters: Parameters, 
                provider: Parameters => (Parameters, Double)): (Parameters, Seq[Double]) = {
-    
-    (0 until numIterations).foldLeft((initialParameters, Seq[Double]())) 
-    { case ((params, costs), iter) =>
-      val (newParams, newCost) = provider(params)
-      
-      if (iter % 1000 == 0) {
-        println(s"cost at iteration: $iter -> $newCost")
+    var parameters = initialParameters
+    var cost = Double.MaxValue
+    var costs = Seq[Double]()
+    for {
+      iteration <- 0 until numIterations
+      if cost > costLimit
+    } {
+      val (newParameters, newCost) = provider(parameters)
+      if (iteration % 1000 == 0) {
+        println(s"cost at iteration: $iteration -> $newCost")
+        costs = costs :+ newCost
       }
-      (newParams, costs :+ newCost)
+      cost = newCost
+      parameters = newParameters
     }
+    (parameters, costs)
   }
 }

@@ -14,9 +14,9 @@ class EntropyCostFunction() extends CostFunction {
     if (m == 0) {
       throw new RuntimeException("Inputs array should not be empty")
     }
-    val entropy = - sum((y *:* log(aL)) + ((1.0 - y) *:* log(1.0 - aL))) / m
-    if (Double.NaN.equals(entropy)) 0.0
-    else entropy
+    val cost = -(y *:* log(aL)) - ((1.0 - y) *:* log(1.0 - aL))
+    val nonNanCost = cost.mapValues(x => if (x.isNaN) 0.0 else x)
+    sum(nonNanCost) / m
   }
 }
 

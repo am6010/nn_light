@@ -54,7 +54,9 @@ class BackwardActivationImpl extends BackwardActivation {
                      y: DenseMatrix[Double], 
                      cache: Cache): Grads = {
     val L = cache.caches.size
-    val dAL = - ((y /:/ aL) - ((1.0 - y) /:/ (1.0 - aL))) 
+    val zeroDev = (y /:/ aL).mapValues(x => if (x.isNaN) 0.0 else x)
+    val oneDev = ((1.0 - y) /:/ (1.0 - aL)).mapValues(x => if (x.isNaN) 0.0 else x)
+    val dAL = - (zeroDev - oneDev)
     val lastCache = cache.caches(L - 1)
     val derivatives = linearActivationBackward(dAL, lastCache, Sigmoid())
     val lastLayerGrads = Grads(Map(), Map()).update(derivatives, L-1, L)
@@ -97,8 +99,9 @@ class BackwardActivationL2Impl(lambda: Double) extends BackwardActivation {
                      y: DenseMatrix[Double],
                      cache: Cache): Grads = {
     val L = cache.caches.size
-    val ones = DenseMatrix.ones[Double](y.rows, y.cols)
-    val dAL = - ((y /:/ aL) - ((ones - y) /:/ (ones - aL)))
+    val zeroDev = (y /:/ aL).mapValues(x => if (x.isNaN) 0.0 else x)
+    val oneDev = ((1.0 - y) /:/ (1.0 - aL)).mapValues(x => if (x.isNaN) 0.0 else x)
+    val dAL = - (zeroDev - oneDev)
     val lastCache = cache.caches(L - 1)
     val derivatives = linearActivationBackward(dAL, lastCache, Sigmoid())
     val lastLayerGrads = Grads(Map(), Map()).update(derivatives, L-1, L)

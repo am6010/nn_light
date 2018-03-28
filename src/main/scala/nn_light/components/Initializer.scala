@@ -1,7 +1,8 @@
 package nn_light.components
 
-import breeze.linalg.{DenseMatrix, DenseVector, max, min}
+import breeze.linalg.{DenseMatrix, DenseVector, any, max, min}
 import breeze.numerics.sqrt
+import breeze.stats.distributions.Rand
 
 trait Initializer {
   def initializeParametersDeep(layersDims: Seq[Int]): Parameters
@@ -19,7 +20,8 @@ trait Initializer {
     val zippedLayersDims = layersDims.zip(layersDims.tail).zipWithIndex
 
     val weights = zippedLayersDims.foldLeft(weightsInit) { case (w, ((li_1, li), idx)) =>
-      val lWeight: DenseMatrix[Double] = DenseMatrix.rand(li, li_1) *:* multipliers(idx)
+      val lWeight: DenseMatrix[Double] = 
+        DenseMatrix.rand(li, li_1, Rand.gaussian) *:* multipliers(idx)
       w + (s"W${idx + 1}" -> lWeight)
     }
 
@@ -53,13 +55,11 @@ case class Parameters(weights: Map[String, DenseMatrix[Double]],
   
   def update(grads: Grads, learningRate: Double): Parameters = {
     val newWeights = weights.map { case (key, w) =>
-        val rates = DenseMatrix.fill(w.rows, w.cols) {learningRate}
-        key -> (w - (rates *:* grads.matrices(s"d$key")))
+      key -> (w - (learningRate * grads.matrices(s"d$key")))
     }
     
     val newBias = bias.map { case (key, b) =>
-        val rates = DenseVector.fill(b.length) {learningRate}
-        key -> (b - (rates *:* grads.vectors(s"d$key")))
+      key -> (b - (learningRate * grads.vectors(s"d$key")))
     }
     
     Parameters(newWeights, newBias)
