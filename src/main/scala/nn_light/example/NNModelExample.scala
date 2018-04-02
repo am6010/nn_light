@@ -4,7 +4,7 @@ import breeze.linalg.{DenseMatrix, sum}
 import breeze.numerics.abs
 import nn_light.components._
 
-object NNModerExample extends App {
+object NNModelExample extends App {
   
   
   def loadFile(filename: String): DenseMatrix[Double] = {
@@ -33,8 +33,8 @@ object NNModerExample extends App {
   val newTestY = trainY(::, 0 until testY.cols)
 
   val lambda = 1.2
-  val context = SimpleNNContext(Seq(testX.rows, 7, 1), 0.0075, 1000,
-    RandomInitializer(0.01),
+  val context = SimpleNNContext(Seq(testX.rows, 21, 7, 5, 1), 0.0075, 1000,
+    RandomInitializer(0.1),
     new LForwardModel(),
     new EntropyCostFunction() ,
     new BackwardActivationImpl(),

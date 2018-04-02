@@ -36,8 +36,8 @@ class BackwardActivationImpl extends BackwardActivation {
     val aPrev = linearCache.activations
     val weights = linearCache.weights
     val m = aPrev.cols.toDouble
-    val dW = (dZ * aPrev.t) /:/ m
-    val db = sum(dZ, Axis._1)  /:/ m
+    val dW = (dZ * aPrev.t) / m
+    val db = sum(dZ, Axis._1)  / m
     val dAPrev = weights.t * dZ
     Derivatives(dAPrev, dW, db)
   }
@@ -54,8 +54,8 @@ class BackwardActivationImpl extends BackwardActivation {
                      y: DenseMatrix[Double], 
                      cache: Cache): Grads = {
     val L = cache.caches.size
-    val zeroDev = (y /:/ aL).mapValues(x => if (x.isNaN) 0.0 else x)
-    val oneDev = ((1.0 - y) /:/ (1.0 - aL)).mapValues(x => if (x.isNaN) 0.0 else x)
+    val zeroDev = MathUtils.removeInfiniteAndNans(y /:/ aL)
+    val oneDev = MathUtils.removeInfiniteAndNans((1.0 - y) /:/ (1.0 - aL))
     val dAL = - (zeroDev - oneDev)
     val lastCache = cache.caches(L - 1)
     val derivatives = linearActivationBackward(dAL, lastCache, Sigmoid())
@@ -99,8 +99,8 @@ class BackwardActivationL2Impl(lambda: Double) extends BackwardActivation {
                      y: DenseMatrix[Double],
                      cache: Cache): Grads = {
     val L = cache.caches.size
-    val zeroDev = (y /:/ aL).mapValues(x => if (x.isNaN) 0.0 else x)
-    val oneDev = ((1.0 - y) /:/ (1.0 - aL)).mapValues(x => if (x.isNaN) 0.0 else x)
+    val zeroDev = MathUtils.removeInfiniteAndNans(y /:/ aL)
+    val oneDev = MathUtils.removeInfiniteAndNans((1.0 - y) /:/ (1.0 - aL))
     val dAL = - (zeroDev - oneDev)
     val lastCache = cache.caches(L - 1)
     val derivatives = linearActivationBackward(dAL, lastCache, Sigmoid())
