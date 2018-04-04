@@ -23,12 +23,14 @@ class DeepNN(context: NNContext) extends NNModel {
   
   def train(X: DenseMatrix[Double], Y: DenseMatrix[Double]): Seq[Double] = {
     val startParams = context.initializer.initializeParametersDeep(layersDims)
-    val (trainedParams, costs) = optimizer.optimize(startParams, params => {
-      val(aL, cache) =  forwardActivation.lModelForward(X, params)
-      val cost = costFunction.computeCost(aL, Y, params)
-      val grads = backwardActivation.lModelBackward(aL, Y, cache)
-      (params.update(grads, learningRate), cost)
-    })
+    val (trainedParams, costs) = optimizer.optimize(startParams, X, Y, 
+      (params, Xinput, Yinput) => {
+        val(aL, cache) =  forwardActivation.lModelForward(Xinput, params)
+        val cost = costFunction.computeCost(aL, Yinput, params)
+        val grads = backwardActivation.lModelBackward(aL, Yinput, cache)
+        (params.update(grads, learningRate), cost)
+      }
+    )
     parameters = trainedParams
     costs
   }

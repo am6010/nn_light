@@ -1,6 +1,6 @@
 package nn_light.components
 
-import breeze.linalg.{DenseMatrix, DenseVector, any, max, min}
+import breeze.linalg.{DenseMatrix, DenseVector}
 import breeze.numerics.sqrt
 import breeze.stats.distributions.Rand
 
