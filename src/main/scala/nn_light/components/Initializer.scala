@@ -2,7 +2,7 @@ package nn_light.components
 
 import breeze.linalg.{DenseMatrix, DenseVector}
 import breeze.numerics.sqrt
-import breeze.stats.distributions.Rand
+import breeze.stats.distributions.{Gaussian, Rand}
 
 trait Initializer {
   def initializeParametersDeep(layersDims: Seq[Int]): Parameters
@@ -20,8 +20,9 @@ trait Initializer {
     val zippedLayersDims = layersDims.zip(layersDims.tail).zipWithIndex
 
     val weights = zippedLayersDims.foldLeft(weightsInit) { case (w, ((li_1, li), idx)) =>
+      val normal01 = Gaussian(0,1)
       val lWeight: DenseMatrix[Double] = 
-        DenseMatrix.rand(li, li_1, Rand.gaussian) *:* multipliers(idx)
+        DenseMatrix.rand(li, li_1, normal01) *:* multipliers(idx)
       w + (s"W${idx + 1}" -> lWeight)
     }
 

@@ -1,13 +1,13 @@
 package nn_light.example
 
 import breeze.linalg.{*, DenseMatrix, sum}
-import breeze.numerics.{abs, log, sin}
+import breeze.numerics.{abs, sin}
 import breeze.stats.distributions.Rand
 import nn_light.components._
 
 object NNModelExample2 extends App {
-  val numOfFeatures = 64
-  val trainX = DenseMatrix.rand(numOfFeatures, 20024, Rand.gaussian)
+  val numOfFeatures = 2
+  val trainX = DenseMatrix.rand(numOfFeatures, 10000, Rand.gaussian)
   val testX = DenseMatrix.rand(numOfFeatures, 64, Rand.gaussian)
   val sinTrainX = sin(trainX * (2 * math.Pi))
   val sinTestX = sin(testX * (2 * math.Pi))
@@ -18,16 +18,19 @@ object NNModelExample2 extends App {
   val testY = sum(sinTestX(::, *)).inner
     .mapValues(x => if (x > 0.0) 1.0 else 0.0).toDenseMatrix
   
-  val context = SimpleNNContext(Seq(trainX.rows, 20, 7, 5, 1),  0.3 , 1000,
+  val context = SimpleNNContext(Seq(trainX.rows, 5, 10, 7, 3, 1),  0.012 , 1000,
     HeInitializer(),
     new LForwardModel(),
     new EntropyCostFunction(),
     new BackwardActivationImpl(),
-    new GradientDescentOptimizer(20000, 0.01))
+    new RandomMiniBatchGradientDescentOptimizer(64, 20000, 0.08))
+    //new GradientDescentOptimizer(40000, 0.08))
 
   val nn = DeepNN(context)
 
-  nn.train(trainX, trainY)
+  val costs = nn.train(trainX, trainY)
+  
+  println(costs.min)
 
   val trainPred = nn.predict(trainX)
   val trainAcc = 1.0 - (sum(abs(nn.predict(trainX) - trainY)) / trainY.cols)
