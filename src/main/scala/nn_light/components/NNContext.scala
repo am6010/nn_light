@@ -2,7 +2,6 @@ package nn_light.components
 
 trait NNContext {
   def layersDims: Seq[Int]
-  def learningRate: Double 
   def numIterations: Int
   def initializer: Initializer
   def forwardActivation: ForwardActivation
@@ -12,8 +11,7 @@ trait NNContext {
 }
 
 
-case class SimpleNNContext(layersDims: Seq[Int], 
-                           learningRate: Double,
+case class SimpleNNContext(layersDims: Seq[Int],
                            numIterations: Int,
                            initializer: Initializer,
                            forwardActivation: ForwardActivation,

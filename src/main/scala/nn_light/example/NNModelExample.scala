@@ -33,12 +33,12 @@ object NNModelExample extends App {
   val newTestY = trainY(::, 0 until testY.cols)
 
   val lambda = 1.2
-  val context = SimpleNNContext(Seq(testX.rows, 21, 7, 5, 1), 0.0075, 1000,
+  val context = SimpleNNContext(Seq(testX.rows, 21, 7, 5, 1), 1000,
     RandomInitializer(0.1),
     new LForwardModel(),
     new EntropyCostFunction() ,
     new BackwardActivationImpl(),
-    new GradientDescentOptimizer(10000))
+    new GradientDescentOptimizer(10000, 0.0075))
   
   val nn = DeepNN(context)
   

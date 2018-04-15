@@ -19,7 +19,6 @@ class DeepNN(context: NNContext) extends NNModel {
   private val forwardActivation = context.forwardActivation
   private val costFunction = context.costFunction
   private val backwardActivation = context.backwardActivation
-  private val learningRate = context.learningRate
   
   def train(X: DenseMatrix[Double], Y: DenseMatrix[Double]): Seq[Double] = {
     val startParams = context.initializer.initializeParametersDeep(layersDims)
@@ -28,7 +27,7 @@ class DeepNN(context: NNContext) extends NNModel {
         val(aL, cache) =  forwardActivation.lModelForward(Xinput, params)
         val cost = costFunction.computeCost(aL, Yinput, params)
         val grads = backwardActivation.lModelBackward(aL, Yinput, cache)
-        (params.update(grads, learningRate), cost)
+        (grads, cost)
       }
     )
     parameters = trainedParams
