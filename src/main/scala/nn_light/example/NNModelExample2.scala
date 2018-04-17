@@ -23,7 +23,8 @@ object NNModelExample2 extends App {
     new LForwardModel(),
     new EntropyCostFunction(),
     new BackwardActivationImpl(),
-    new MomentumRandomMiniBatchGradientDescentOptimizer(64, 10000, 0.012, 0.9, 1e-8))
+    new RandomMiniBatchWithADAMOptimizer(64, 10000, 0.012, 0.9, 0.999, 1e-8, 1e-5))
+    // new MomentumRandomMiniBatchGradientDescentOptimizer(64, 10000, 0.012, 0.9, 1e-8))
     // new RandomMiniBatchGradientDescentOptimizer(64, 5000, 0.012, 0.00001))
     //new GradientDescentOptimizer(40000, 0.08))
 
